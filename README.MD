@@ -30,3 +30,52 @@ The port on which the node serves full node HTTP API. Defaults to `8090`.
 ### SOLIDITY_NODE_PORT
 
 The port on which the node serves solidity node HTTP API. Defaults to `8091`.
+
+### CONFIG_EVENT_PLUGIN_ENABLED
+
+Whether to enable the Kafka [event plugin](https://github.com/tronprotocol/event-plugin).
+
+Options:
+
+- `true`
+- `false` (default)
+
+### EVENT_PLUGIN_KAFKA_SERVER
+
+Kafka server address for the event plugin. Mandatory if `CONFIG_EVENT_PLUGIN_ENABLED` is `true`.
+
+### EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED
+
+Whether to enable the `block` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
+
+### EVENT_PLUGIN_TRANSACTION_TRIGGER_ENABLED
+
+Whether to enable the `transaction` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
+
+### EVENT_PLUGIN_CONTRACTEVENT_TRIGGER_ENABLED
+
+Whether to enable the `contractevent` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
+
+### EVENT_PLUGIN_CONTRACTLOG_TRIGGER_ENABLED
+
+Whether to enable the `contractlog` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
