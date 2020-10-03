@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG_FILE=/etc/tron/main_net_config.conf
+CONFIG_FILE=/etc/tron/mainnet_config.conf
 CONFIG_P2P_PORT=18888
 CONFIG_FULL_NODE_PORT=8090
 CONFIG_SOLIDITY_NODE_PORT=8091
@@ -8,12 +8,12 @@ CONFIG_SOLIDITY_NODE_PORT=8091
 if [[ -z "${NETWORK}" ]] || [[ "${NETWORK}" == "mainnet" ]]; then
   # Network set to mainnet
   :
-elif [[ "${NETWORK}" == "testnet" ]]; then
-  # Network set to testnet
-  CONFIG_FILE=/etc/tron/test_net_config.conf
+elif [[ "${NETWORK}" == "nile" ]]; then
+  # Network set to nile
+  CONFIG_FILE=/etc/tron/nile_config.conf
   :
 else
-  echo "Invalid NETWORK: ${NETWORK}. Must be one of: \"mainnet\", \"testnet\""
+  echo "Invalid NETWORK: ${NETWORK}. Must be one of: \"mainnet\", \"nile\""
   exit 1
 fi
 

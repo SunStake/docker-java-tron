@@ -17,7 +17,7 @@ The Tron network to connect to.
 Options:
 
 - `mainnet` (default)
-- `testnet`
+- `nile`
 
 ### P2P_PORT
 
