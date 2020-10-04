@@ -79,3 +79,11 @@ Options:
 
 - `true`
 - `false` (default)
+
+### EVENT_PLUGIN_ADDRESS_FILTER
+
+Contract address filter for the event plugin. Multiple addresses are separated by space. By default no filter is applied.
+
+### EVENT_PLUGIN_TOPIC_FILTER
+
+Contract topic filter for the event plugin. Multiple topics are separated by space. By default no filter is applied.
