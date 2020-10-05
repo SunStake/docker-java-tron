@@ -31,7 +31,11 @@ The port on which the node serves full node HTTP API. Defaults to `8090`.
 
 The port on which the node serves solidity node HTTP API. Defaults to `8091`.
 
-### CONFIG_EVENT_PLUGIN_ENABLED
+### VM_MAX_TIME_RATIO
+
+TVM time ratio to avoid timeout. See this [issue](https://github.com/tronprotocol/java-tron/issues/2228). Defaults to `5.0`.
+
+### EVENT_PLUGIN_ENABLED
 
 Whether to enable the Kafka [event plugin](https://github.com/tronprotocol/event-plugin).
 
@@ -42,7 +46,7 @@ Options:
 
 ### EVENT_PLUGIN_KAFKA_SERVER
 
-Kafka server address for the event plugin. Mandatory if `CONFIG_EVENT_PLUGIN_ENABLED` is `true`.
+Kafka server address for the event plugin. Mandatory if `EVENT_PLUGIN_ENABLED` is `true`.
 
 ### EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED
 

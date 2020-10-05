@@ -4,6 +4,7 @@ CONFIG_FILE=/etc/tron/mainnet_config.conf
 CONFIG_P2P_PORT=18888
 CONFIG_FULL_NODE_PORT=8090
 CONFIG_SOLIDITY_NODE_PORT=8091
+CONFIG_VM_MAX_TIME_RATIO=5.0
 
 CONFIG_EVENT_PLUGIN_ENABLED=false
 CONFIG_EVENT_PLUGIN_PATH=""
@@ -51,6 +52,10 @@ fi
 
 if [[ -n "${SOLIDITY_NODE_PORT}" ]]; then
   CONFIG_SOLIDITY_NODE_PORT=${SOLIDITY_NODE_PORT}
+fi
+
+if [[ -n "${VM_MAX_TIME_RATIO}" ]]; then
+  CONFIG_VM_MAX_TIME_RATIO=${VM_MAX_TIME_RATIO}
 fi
 
 # Event plugin related configs
@@ -145,6 +150,7 @@ fi
 sed -i -e "s/listen.port = .*/listen.port = ${CONFIG_P2P_PORT}/g" ${CONFIG_FILE}
 sed -i -e "s/fullNodePort = .*/fullNodePort = ${CONFIG_FULL_NODE_PORT}/g" ${CONFIG_FILE}
 sed -i -e "s/solidityPort = .*/solidityPort = ${CONFIG_SOLIDITY_NODE_PORT}/g" ${CONFIG_FILE}
+sed -i -e "s/VM_MAX_TIME_RATIO_PLACEHOLDER/${CONFIG_VM_MAX_TIME_RATIO}/g" ${CONFIG_FILE}
 
 sed -i -e "s/PLUGIN_PATH_PLACEHOLDER/${CONFIG_EVENT_PLUGIN_PATH}/g" ${CONFIG_FILE}
 sed -i -e "s/KAFKA_SERVER_PLACEHOLDER/${CONFIG_EVENT_PLUGIN_KAFKA_SERVER}/g" ${CONFIG_FILE}
