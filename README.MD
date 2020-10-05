@@ -6,6 +6,14 @@ This repository hosts custom Dockerfiles for building [java-tron](https://github
 
 Images are built with Docker Hub's automated build service. Available [here](https://hub.docker.com/r/sunstake/java-tron).
 
+## Data Storage
+
+Blockchain data are stored in `/data`. No volume is mounted by default. Mount a volume to `/data` for data persistence.
+
+For example, you can use an existing `output-directory` on your host system at `/your/output-directory` with:
+
+    $ docker run -v /your/output-directory:/data sunstake/java-tron:4.0.1
+
 ## Configuration
 
 Configuration can be done via environment variables. The entry script modifies the config file on the fly before the node is run.
