@@ -92,6 +92,33 @@ Options:
 - `true`
 - `false` (default)
 
+### EVENT_PLUGIN_SOLIDITY_BLOCK_TRIGGER_ENABLED
+
+Whether to enable the `solidity` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
+
+### EVENT_PLUGIN_SOLIDITY_EVENT_TRIGGER_ENABLED
+
+Whether to enable the `solidityevent` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
+
+### EVENT_PLUGIN_SOLIDITY_LOG_TRIGGER_ENABLED
+
+Whether to enable the `soliditylog` trigger for the event plugin.
+
+Options:
+
+- `true`
+- `false` (default)
+
 ### EVENT_PLUGIN_ADDRESS_FILTER
 
 Contract address filter for the event plugin. Multiple addresses are separated by space. By default no filter is applied.
