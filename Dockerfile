@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk AS build
 
-ENV JAVA_TRON_VERSION=GreatVoyage-v4.0.2
+ENV JAVA_TRON_VERSION=GreatVoyage-v4.1.0
 
 WORKDIR /src
 RUN git clone -b "${JAVA_TRON_VERSION}" --depth 1 https://github.com/tronprotocol/java-tron.git
