@@ -8,11 +8,26 @@ Images are built with Docker Hub's automated build service. Available [here](htt
 
 ## Data Storage
 
-Blockchain data are stored in `/data`. No volume is mounted by default. Mount a volume to `/data` for data persistence.
+Blockchain data are stored in `/data`. No volume is mounted by default. Mount a volume to `/data` for data persistence, or you'll lose data once the container is removed.
 
 For example, you can use an existing `output-directory` on your host system at `/your/output-directory` with:
 
-    $ docker run -v /your/output-directory:/data sunstake/java-tron:4.0.1
+    $ docker run -v /your/output-directory:/data sunstake/java-tron
+
+## Example: Running a Local Single-Node Testnet
+
+Running a local, single-node test network can be helpful for developing and testing decentralized applications. With `docker-java-tron` you can do it with a simple command by setting `NETWORK` to `dev` and enabling witness mode:
+
+    $ docker run -e NETWORK=dev -e WITNESS_MODE=true -p 8090:8090 sunstake/java-tron
+
+Once the node is up you can access it like:
+
+    $ curl -X POST http://localhost:8090/wallet/getnowblock
+
+The local network contains a witness account with a lot of test TRX:
+
+    Private Key: da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0
+    Address: TPL66VK2gCXNCD7EJg9pgJRfqcRazjhUZY
 
 ## Configuration
 
@@ -26,6 +41,7 @@ Options:
 
 - `mainnet` (default)
 - `nile`
+- `dev` (local single-node test network)
 
 ### P2P_PORT
 
@@ -42,6 +58,19 @@ The port on which the node serves solidity node HTTP API. Defaults to `8091`.
 ### VM_MAX_TIME_RATIO
 
 TVM time ratio to avoid timeout. See this [issue](https://github.com/tronprotocol/java-tron/issues/2228). Defaults to `5.0`.
+
+### WITNESS_MODE
+
+> **NOTE**
+>
+> This option is only supported on version `4.1.1` or higher.
+
+Whether to enable witness mode (block producer), useful for running a local test network.
+
+Options:
+
+- `true`
+- `false` (default)
 
 ### EVENT_PLUGIN_ENABLED
 

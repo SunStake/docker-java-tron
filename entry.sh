@@ -20,6 +20,7 @@ CONFIG_CONTRACT_ADDRESS_FILTER="\"\""
 CONFIG_CONTRACT_TOPIC_FILTER="\"\""
 
 ES_FLAG=""
+WITNESS_FLAG=""
 
 if [[ -z "${NETWORK}" ]] || [[ "${NETWORK}" == "mainnet" ]]; then
   # Network set to mainnet
@@ -28,8 +29,24 @@ elif [[ "${NETWORK}" == "nile" ]]; then
   # Network set to nile
   CONFIG_FILE=/etc/tron/nile_config.conf
   :
+elif [[ "${NETWORK}" == "dev" ]]; then
+  # Network set to dev
+  CONFIG_FILE=/etc/tron/dev_config.conf
+  :
 else
-  echo "Invalid NETWORK: ${NETWORK}. Must be one of: \"mainnet\", \"nile\""
+  echo "Invalid NETWORK: ${NETWORK}. Must be one of: \"mainnet\", \"nile\", \"dev\""
+  exit 1
+fi
+
+if [[ -z "${WITNESS_MODE}" ]] || [[ "${WITNESS_MODE}" == "false" ]]; then
+  # Witness mode disabled
+  :
+elif [[ "${WITNESS_MODE}" == "true" ]]; then
+  # Witness mode enabled
+  WITNESS_FLAG="--witness"
+  :
+else
+  echo "Invalid WITNESS_MODE: ${WITNESS_MODE}. Must be one of: \"true\", \"false\""
   exit 1
 fi
 
@@ -37,7 +54,7 @@ if [[ -z "${EVENT_PLUGIN_ENABLED}" ]] || [[ "${EVENT_PLUGIN_ENABLED}" == "false"
   # Event plugin disabled
   :
 elif [[ "${EVENT_PLUGIN_ENABLED}" == "true" ]]; then
-  # Network set to nile
+  # Event plugin enabled
   CONFIG_EVENT_PLUGIN_ENABLED=true
   :
 else
@@ -203,7 +220,7 @@ sed -i -e "s/{SOLIDITY_LOG_TRIGGER_PLACEHOLDER}/${CONFIG_SOLIDITY_LOG_TRIGGER_EN
 sed -i -e "s/{CONTRACT_ADDRESS_FILTER_PLACEHOLDER}/${CONFIG_CONTRACT_ADDRESS_FILTER}/g" ${CONFIG_FILE}
 sed -i -e "s/{CONTRACT_TOPIC_FILTER_PLACEHOLDER}/${CONFIG_CONTRACT_TOPIC_FILTER}/g" ${CONFIG_FILE}
 
-COMMAND="java -jar /usr/local/tron/FullNode.jar -c ${CONFIG_FILE} -d /data ${ES_FLAG}"
+COMMAND="java -jar /usr/local/tron/FullNode.jar -c ${CONFIG_FILE} -d /data ${ES_FLAG} ${WITNESS_FLAG}"
 
 echo ${COMMAND}
 exec ${COMMAND}
