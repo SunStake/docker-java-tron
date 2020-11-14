@@ -1,0 +1,32 @@
+name: Build Docker Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_TRON_GIT_TAG: GreatVoyage-v4.1.1
+      JAVA_TRON_VERSION: 4.1.1
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1.6.0
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PAT }}
+
+      - name: Build Docker Image
+        run: |
+          docker build --build-arg JAVA_TRON_VERSION=${JAVA_TRON_GIT_TAG} -t sunstake/java-tron:${JAVA_TRON_VERSION} .
+          docker tag sunstake/java-tron:${JAVA_TRON_VERSION} sunstake/java-tron:latest
+
+      - name: Push Docker Image
+        run: |
+          docker push sunstake/java-tron:${JAVA_TRON_VERSION}
+          docker push sunstake/java-tron:latest
