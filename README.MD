@@ -4,7 +4,7 @@ This repository hosts custom Dockerfiles for building [java-tron](https://github
 
 ## Docker Hub
 
-Images are built with Docker Hub's automated build service. Available [here](https://hub.docker.com/r/sunstake/java-tron).
+Images are built with GitHub Actions. Available [here](https://hub.docker.com/r/sunstake/java-tron).
 
 ## Data Storage
 
