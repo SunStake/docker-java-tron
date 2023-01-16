@@ -1,10 +1,12 @@
+## This is not production ready code and should primarily be used for reference.
+
 # Dockerfile for java-tron
 
 This repository hosts custom Dockerfiles for building [java-tron](https://github.com/tronprotocol/java-tron) images that are more container-friendly and works out of the box.
 
-## Docker Hub
+## Fork Notice
 
-Images are built with GitHub Actions. Available [here](https://hub.docker.com/r/sunstake/java-tron).
+This repository has been forked from [SunStake/docker-java-tron](https://github.com/SunStake/docker-java-tron), in order update and extend a bit. 
 
 ## Data Storage
 
@@ -13,21 +15,6 @@ Blockchain data are stored in `/data`. No volume is mounted by default. Mount a 
 For example, you can use an existing `output-directory` on your host system at `/your/output-directory` with:
 
     $ docker run -v /your/output-directory:/data sunstake/java-tron
-
-## Example: Running a Local Single-Node Testnet
-
-Running a local, single-node test network can be helpful for developing and testing decentralized applications. With `docker-java-tron` you can do it with a simple command by setting `NETWORK` to `dev` and enabling witness mode:
-
-    $ docker run -e NETWORK=dev -e WITNESS_MODE=true -p 8090:8090 sunstake/java-tron
-
-Once the node is up you can access it like:
-
-    $ curl -X POST http://localhost:8090/wallet/getnowblock
-
-The local network contains a witness account with a lot of test TRX:
-
-    Private Key: da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0
-    Address: TPL66VK2gCXNCD7EJg9pgJRfqcRazjhUZY
 
 ## Configuration
 
@@ -41,7 +28,6 @@ Options:
 
 - `mainnet` (default)
 - `nile`
-- `dev` (local single-node test network)
 
 ### P2P_PORT
 
@@ -74,16 +60,30 @@ Options:
 
 ### EVENT_PLUGIN_ENABLED
 
-Whether to enable the Kafka [event plugin](https://github.com/tronprotocol/event-plugin).
+Whether to enable the [event plugin](https://github.com/tronprotocol/event-plugin).
 
 Options:
 
 - `true`
 - `false` (default)
 
+
+### EVENT_PLUGIN_BACKEND
+
+Storage backend to use with the [event plugin](https://github.com/tronprotocol/event-plugin).
+
+Options:
+
+- `mongodb`
+- `kafka`
+
+### EVENT_PLUGIN_MONGO_SERVER
+
+MongoDB server address for the event plugin. Mandatory if `EVENT_PLUGIN_ENABLED` is `true` and `EVENT_PLUGIN_BACKEND` is `mongodb`.
+
 ### EVENT_PLUGIN_KAFKA_SERVER
 
-Kafka server address for the event plugin. Mandatory if `EVENT_PLUGIN_ENABLED` is `true`.
+Kafka server address for the event plugin. Mandatory if `EVENT_PLUGIN_ENABLED` is `true` and `EVENT_PLUGIN_BACKEND` is `kafka`.
 
 ### EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED
 
@@ -93,6 +93,14 @@ Options:
 
 - `true`
 - `false` (default)
+
+### EVENT_PLUGIN_STARTING_BLOCK
+
+Starting block for the event plugin filter
+
+Options: 
+- `Integer`
+- `0` (Default)
 
 ### EVENT_PLUGIN_TRANSACTION_TRIGGER_ENABLED
 

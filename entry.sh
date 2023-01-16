@@ -7,8 +7,11 @@ CONFIG_SOLIDITY_NODE_PORT=8091
 CONFIG_VM_MAX_TIME_RATIO=5.0
 
 CONFIG_EVENT_PLUGIN_ENABLED=false
+CONFIG_EVENT_PLUGIN_BACKEND=""
 CONFIG_EVENT_PLUGIN_PATH=""
-CONFIG_EVENT_PLUGIN_KAFKA_SERVER=""
+CONFIG_EVENT_PLUGIN_SERVER=""
+CONFIG_EVENT_PLUGIN_SERVER_AUTH=""
+CONFIG_EVENT_PLUGIN_STARTING_BLOCK=""
 CONFIG_BLOCK_TRIGGER_ENABLED=false
 CONFIG_TRANSACTION_TRIGGER_ENABLED=false
 CONFIG_CONTRACTEVENT_TRIGGER_ENABLED=false
@@ -31,12 +34,8 @@ elif [[ "${NETWORK}" == "nile" ]]; then
   # Network set to nile
   CONFIG_FILE=/etc/tron/nile_config.conf
   :
-elif [[ "${NETWORK}" == "dev" ]]; then
-  # Network set to dev
-  CONFIG_FILE=/etc/tron/dev_config.conf
-  :
 else
-  echo "Invalid NETWORK: ${NETWORK}. Must be one of: \"mainnet\", \"nile\", \"dev\""
+  echo "Invalid NETWORK: ${NETWORK}. Must be one of: \"mainnet\", \"nile\""
   exit 1
 fi
 
@@ -90,15 +89,44 @@ fi
 
 # Event plugin related configs
 if [[ "${CONFIG_EVENT_PLUGIN_ENABLED}" == "true" ]]; then
-  if [[ -z "${EVENT_PLUGIN_KAFKA_SERVER}" ]]; then
-    echo "EVENT_PLUGIN_KAFKA_SERVER must be specified when event plugin is enabled"
+  ES_FLAG="--es"
+
+  if [[ -z "${EVENT_PLUGIN_STARTING_BLOCK}" ]]; then
+    CONFIG_EVENT_PLUGIN_STARTING_BLOCK=0
+  else
+    CONFIG_EVENT_PLUGIN_STARTING_BLOCK=${EVENT_PLUGIN_STARTING_BLOCK}
+  fi
+
+  if [[ -z "${EVENT_PLUGIN_BACKEND}" ]]; then
+    echo "EVENT_PLUGIN_BACKEND must be specified when event plugin is enabled"
     exit 1
   fi
 
-  ES_FLAG="--es"
+  if [[ "${EVENT_PLUGIN_BACKEND}" == "mongodb" ]]; then
 
-  CONFIG_EVENT_PLUGIN_PATH='\/usr\/local\/tron\/plugins\/plugin-kafka-1.0.0.zip'
-  CONFIG_EVENT_PLUGIN_KAFKA_SERVER=${EVENT_PLUGIN_KAFKA_SERVER}
+    if [[ -z "${EVENT_PLUGIN_MONGO_SERVER}" ]]; then
+      echo "CONFIG_EVENT_PLUGIN_MONGO_SERVER must be specified when [mongo] event plugin is enabled"
+      exit 1
+    fi
+
+    CONFIG_EVENT_PLUGIN_PATH='\/usr\/local\/tron\/plugins\/plugin-mongodb-1.0.0.zip'
+    CONFIG_EVENT_PLUGIN_SERVER=${EVENT_PLUGIN_MONGO_SERVER}
+    CONFIG_EVENT_PLUGIN_SERVER_AUTH="eventlog|${EVENT_PLUGIN_MONGO_DB_USERNAME}|${EVENT_PLUGIN_MONGO_DB_PASSWORD}"
+
+  elif [[ "${EVENT_PLUGIN_BACKEND}" == "kafka" ]]; then
+
+    if [[ -z "${EVENT_PLUGIN_KAFKA_SERVER}" ]]; then
+      echo "EVENT_PLUGIN_KAFKA_SERVER must be specified when [kafka] event plugin is enabled"
+      exit 1
+    fi
+
+    CONFIG_EVENT_PLUGIN_PATH='\/usr\/local\/tron\/plugins\/plugin-kafka-1.0.0.zip'
+    CONFIG_EVENT_PLUGIN_SERVER=${EVENT_PLUGIN_KAFKA_SERVER}
+  else
+    echo "Invalid EVENT_PLUGIN_BACKEND: ${EVENT_PLUGIN_BACKEND}. Must be one of: \"mongodb\", \"kafka\""
+    exit 1
+  fi
+
 
   if [[ -z "${EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED}" ]] || [[ "${EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED}" == "false" ]]; then
     # Block trigger set to false
@@ -219,7 +247,10 @@ sed -i -e "s/solidityPort = .*/solidityPort = ${CONFIG_SOLIDITY_NODE_PORT}/g" ${
 sed -i -e "s/{VM_MAX_TIME_RATIO_PLACEHOLDER}/${CONFIG_VM_MAX_TIME_RATIO}/g" ${CONFIG_FILE}
 
 sed -i -e "s/{PLUGIN_PATH_PLACEHOLDER}/${CONFIG_EVENT_PLUGIN_PATH}/g" ${CONFIG_FILE}
-sed -i -e "s/{KAFKA_SERVER_PLACEHOLDER}/${CONFIG_EVENT_PLUGIN_KAFKA_SERVER}/g" ${CONFIG_FILE}
+sed -i -e "s/{PLUGIN_SERVER_PLACEHOLDER}/${CONFIG_EVENT_PLUGIN_SERVER}/g" ${CONFIG_FILE}
+sed -i -e "s/{PLUGIN_SERVER_AUTH_PLACEHOLDER}/${CONFIG_EVENT_PLUGIN_SERVER_AUTH}/g" ${CONFIG_FILE}
+sed -i -e "s/{PLUGIN_STARTING_BLOCK_PLACEHOLDER}/${CONFIG_EVENT_PLUGIN_STARTING_BLOCK}/g" ${CONFIG_FILE}
+
 sed -i -e "s/{BLOCK_TRIGGER_PLACEHOLDER}/${CONFIG_BLOCK_TRIGGER_ENABLED}/g" ${CONFIG_FILE}
 sed -i -e "s/{TRANSACTION_TRIGGER_PLACEHOLDER}/${CONFIG_TRANSACTION_TRIGGER_ENABLED}/g" ${CONFIG_FILE}
 sed -i -e "s/{CONTRACTEVENT_TRIGGER_PLACEHOLDER}/${CONFIG_CONTRACTEVENT_TRIGGER_ENABLED}/g" ${CONFIG_FILE}
@@ -232,7 +263,11 @@ sed -i -e "s/{CONTRACT_TOPIC_FILTER_PLACEHOLDER}/${CONFIG_CONTRACT_TOPIC_FILTER}
 sed -i -e "s/{RPC_FULL_NODE}/${RPC_FULL_NODE}/g" ${CONFIG_FILE}
 sed -i -e "s/{RPC_SOLIDITY_NODE}/${RPC_SOLIDITY_NODE}/g" ${CONFIG_FILE}
 
-COMMAND="java -jar /usr/local/tron/FullNode.jar -c ${CONFIG_FILE} -d /data ${ES_FLAG} ${WITNESS_FLAG}"
+COMMAND="./bin/FullNode -c ${CONFIG_FILE} -d /data ${ES_FLAG} ${WITNESS_FLAG}" "$@"
+
+
+echo "Sleeping 10s to wait for mongo to start up"
+sleep 10
 
 echo ${COMMAND}
 exec ${COMMAND}

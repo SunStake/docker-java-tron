@@ -1,0 +1,61 @@
+services:
+  tron-mongodb:
+    container_name: tron-mongodb
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+      - DB_NAME=eventlog
+      - DB_USER
+      - DB_PASSWORD
+    volumes:
+      - tron-mongodb:/data/db
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+  tron-node:
+    container_name: tron-node
+    build: 
+      context: ./
+      args: 
+        - JAVA_TRON_VERSION=GreatVoyage-v4.6.0
+    environment:
+      - NETWORK=nile
+      - VM_MAX_TIME_RATIO=20.0
+      - P2P_PORT=28888
+      - FULL_NODE_PORT=18090
+      - SOLIDITY_NODE_PORT=18091
+      - EVENT_PLUGIN_ENABLED=true
+      - EVENT_PLUGIN_BACKEND=mongodb
+      - EVENT_PLUGIN_MONGO_SERVER=tron-mongodb:27017
+      - EVENT_PLUGIN_MONGO_DB_USERNAME=${DB_USER}
+      - EVENT_PLUGIN_MONGO_DB_PASSWORD=${DB_PASSWORD}
+      - EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED=true
+      - EVENT_PLUGIN_TRANSACTION_TRIGGER_ENABLED=true
+      - EVENT_PLUGIN_CONTRACTEVENT_TRIGGER_ENABLED=true
+      - EVENT_PLUGIN_STARTING_BLOCK = 0
+    ports:
+      - "18090:18090"
+      - "18091:18091"
+    restart: always
+    volumes:
+      - tron-node:/data
+    depends_on:
+      - tron-mongodb
+  tron-eventquery:
+    container_name: tron-eventquery
+    build:
+      context: ./tron-eventquery/
+    environment:
+      - NETWORK=nile
+      - DB_HOST=tron-mongodb
+      - DB_PORT=27017
+      - DB_USER
+      - DB_PASSWORD
+    ports:
+      - 127.0.0.1:8080:8080
+    depends_on:
+      - tron-node
+
+volumes:
+  tron-mongodb:
+  tron-node:
