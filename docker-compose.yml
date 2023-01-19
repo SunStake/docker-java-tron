@@ -21,24 +21,14 @@ services:
       context: ./tron-node/
       args:
         - JAVA_TRON_VERSION=GreatVoyage-v4.7.0
+    env_file:
+      - ./eventplugin.config
     environment:
       - NETWORK=mainnet
       - VM_MAX_TIME_RATIO=20.0
       - P2P_PORT=28888
       - FULL_NODE_PORT=18090
       - SOLIDITY_NODE_PORT=18091
-      - EVENT_PLUGIN_ENABLED=true
-      - EVENT_PLUGIN_BACKEND=mongodb
-      - EVENT_PLUGIN_MONGO_SERVER=tron-mongodb:27017
-      - EVENT_PLUGIN_MONGO_DB_USERNAME=${DB_USER}
-      - EVENT_PLUGIN_MONGO_DB_PASSWORD=${DB_PASSWORD}
-      - EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED=false
-      - EVENT_PLUGIN_TRANSACTION_TRIGGER_ENABLED=true
-      - EVENT_PLUGIN_CONTRACTEVENT_TRIGGER_ENABLED=false
-      - EVENT_PLUGIN_STARTING_BLOCK=0
-      - EVENT_PLUGIN_ADDRESS_FILTER=
-      - EVENT_PLUGIN_TOPIC_FILTER=
-
     ports:
       - "18090:18090"
       - "18091:18091"
