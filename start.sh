@@ -28,8 +28,14 @@ if [ -z "$MONGO_INITDB_ROOT_PASSWORD" ]; then
 fi
 
 echo "---"
+echo "Initializing storage..."
+
+mkdir -p ./data/mongod
+mkdir -p ./data/node
+
+echo "---"
 echo "Starting Tron Node..."
 echo "[MAINNET]"
 
 # Start Tron Node
-# docker compose up -d
+docker compose up -d

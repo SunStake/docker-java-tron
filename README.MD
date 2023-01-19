@@ -10,15 +10,18 @@ This repository has been forked from [SunStake/docker-java-tron](https://github.
 
 ## Data Storage
 
-Blockchain data are stored in `/data`. No volume is mounted by default. Mount a volume to `/data` for data persistence, or you'll lose data once the container is removed.
-
-For example, you can use an existing `output-directory` on your host system at `/your/output-directory` with:
-
-    $ docker run -v /your/output-directory:/data sunstake/java-tron
+Blockchain data is stored in `./data/node`. 
 
 ## Configuration
 
 Configuration can be done via environment variables. The entry script modifies the config file on the fly before the node is run.
+
+Most of configuration variables are defined in docker-compose file, secrets are defined in `.env` file, which is created automatically if it doesn't exist by launching `start.sh`.
+
+## Logs
+
+By default node dumps logs into `logs/tron.log`
+which we can access using `docker exec -it tron-node tail -f logs/tron.log`
 
 ### NETWORK
 

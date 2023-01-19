@@ -1,3 +1,5 @@
+version: '3.1'
+
 services:
   tron-mongodb:
     container_name: tron-mongodb
@@ -10,14 +12,15 @@ services:
       - DB_USER
       - DB_PASSWORD
     volumes:
-      - tron-mongodb:/data/db
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+      - ./data/mongo/:/data/db
+      - ./db-scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+      - ./db-scripts/cleanup.sh:/cleanup.sh
   tron-node:
     container_name: tron-node
-    build: 
+    build:
       context: ./tron-node/
-      args: 
-        - JAVA_TRON_VERSION=GreatVoyage-v4.6.0
+      args:
+        - JAVA_TRON_VERSION=GreatVoyage-v4.7.0
     environment:
       - NETWORK=mainnet
       - VM_MAX_TIME_RATIO=20.0
@@ -29,16 +32,19 @@ services:
       - EVENT_PLUGIN_MONGO_SERVER=tron-mongodb:27017
       - EVENT_PLUGIN_MONGO_DB_USERNAME=${DB_USER}
       - EVENT_PLUGIN_MONGO_DB_PASSWORD=${DB_PASSWORD}
-      - EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED=true
+      - EVENT_PLUGIN_BLOCK_TRIGGER_ENABLED=false
       - EVENT_PLUGIN_TRANSACTION_TRIGGER_ENABLED=true
-      - EVENT_PLUGIN_CONTRACTEVENT_TRIGGER_ENABLED=true
-      - EVENT_PLUGIN_STARTING_BLOCK = 0
+      - EVENT_PLUGIN_CONTRACTEVENT_TRIGGER_ENABLED=false
+      - EVENT_PLUGIN_STARTING_BLOCK=0
+      - EVENT_PLUGIN_ADDRESS_FILTER=
+      - EVENT_PLUGIN_TOPIC_FILTER=
+
     ports:
       - "18090:18090"
       - "18091:18091"
     restart: always
     volumes:
-      - tron-node:/data
+      - ./data/node/:/data
     depends_on:
       - tron-mongodb
   tron-eventquery:
@@ -55,7 +61,3 @@ services:
       - 127.0.0.1:8080:8080
     depends_on:
       - tron-node
-
-volumes:
-  tron-mongodb:
-  tron-node:
