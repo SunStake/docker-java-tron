@@ -10,7 +10,7 @@ echo "total memory: $total"
 echo "xmx: $xmx"
 echo "logtime: $logtime"
 echo "Sleeping 10s to wait for mongo to start up"
-sleep 1000
+sleep 10
 
 java -Xmx$xmx -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -Xloggc:./gc.log \
  -XX:+PrintGCDateStamps -XX:+CMSParallelRemarkEnabled -XX:ReservedCodeCacheSize=256m \
