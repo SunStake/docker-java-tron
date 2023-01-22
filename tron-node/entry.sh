@@ -215,7 +215,7 @@ if [[ "${CONFIG_EVENT_PLUGIN_ENABLED}" == "true" ]]; then
   if [[ -n "${EVENT_PLUGIN_ADDRESS_FILTER}" ]]; then
     CONFIG_CONTRACT_ADDRESS_FILTER=""
 
-    IFS=" " read -ra FILTER_ADDRESSES <<< ${EVENT_PLUGIN_ADDRESS_FILTER}
+    IFS="," read -ra FILTER_ADDRESSES <<< ${EVENT_PLUGIN_ADDRESS_FILTER}
     let "LAST_INDEX = ${#FILTER_ADDRESSES[@]} - 1"
     for ind in "${!FILTER_ADDRESSES[@]}"; do
       if [[ "$ind" == "${LAST_INDEX}" ]]; then
@@ -229,7 +229,7 @@ if [[ "${CONFIG_EVENT_PLUGIN_ENABLED}" == "true" ]]; then
   if [[ -n "${EVENT_PLUGIN_TOPIC_FILTER}" ]]; then
     CONFIG_CONTRACT_TOPIC_FILTER=""
 
-    IFS=" " read -ra FILTER_TOPICS <<< ${EVENT_PLUGIN_TOPIC_FILTER}
+    IFS="," read -ra FILTER_TOPICS <<< ${EVENT_PLUGIN_TOPIC_FILTER}
     let "LAST_INDEX = ${#FILTER_TOPICS[@]} - 1"
     for ind in "${!FILTER_TOPICS[@]}"; do
       if [[ "$ind" == "${LAST_INDEX}" ]]; then
