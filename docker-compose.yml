@@ -6,15 +6,16 @@ services:
     image: mongo:4.4
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
-      - DB_NAME=eventlog
-      - DB_USER
-      - DB_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      DB_NAME: eventlog
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./data/mongo/:/data/db
       - ./db-scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
       - ./db-scripts/cleanup.sh:/cleanup.sh
+
   tron-node:
     container_name: tron-node
     build:
@@ -25,16 +26,16 @@ services:
       - ./default.conf
       - ./tron.conf
     environment:
-      - NETWORK=mainnet
-      - VM_MAX_TIME_RATIO=20.0
-      - P2P_PORT=28888
-      - FULL_NODE_PORT=18090
-      - SOLIDITY_NODE_PORT=18091
-      - EVENT_PLUGIN_ENABLED=true
-      - EVENT_PLUGIN_BACKEND=mongodb
-      - EVENT_PLUGIN_MONGO_SERVER=tron-mongodb:27017
-      - EVENT_PLUGIN_MONGO_DB_USERNAME=${DB_USER}
-      - EVENT_PLUGIN_MONGO_DB_PASSWORD=${DB_PASSWORD}
+      NETWORK: mainnet
+      VM_MAX_TIME_RATIO: 20.0
+      P2P_PORT: 28888
+      FULL_NODE_PORT: 18090
+      SOLIDITY_NODE_PORT: 18091
+      EVENT_PLUGIN_ENABLED: 'true'
+      EVENT_PLUGIN_BACKEND: mongodb
+      EVENT_PLUGIN_MONGO_SERVER: tron-mongodb:27017
+      EVENT_PLUGIN_MONGO_DB_USERNAME: ${DB_USER}
+      EVENT_PLUGIN_MONGO_DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "127.0.0.1:18090:18090"
       - "127.0.0.1:18091:18091"
@@ -43,18 +44,31 @@ services:
       - ./data/node/:/data
     depends_on:
       - tron-mongodb
+
   tron-eventquery:
     container_name: tron-eventquery
     build:
       context: ./tron-eventquery/
     environment:
-      - NETWORK=mainnet
-      - DB_HOST=tron-mongodb
-      - DB_PORT=27017
-      - DB_USER
-      - DB_PASSWORD
+      NETWORK: mainnet
+      DB_HOST: tron-mongodb
+      DB_PORT: 27017
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - 127.0.0.1:8080:8080
     restart: always
     depends_on:
       - tron-node
+
+  tron-lifecycle-manager:
+    container_name: tron-lifecycle-manager
+    build:
+      context: ./tron-lifecycle-manager/
+    environment:
+      DB_HOST: tron-mongodb
+      DB_PORT: 27017
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SCHEDULE: "6 * * * *"
+
