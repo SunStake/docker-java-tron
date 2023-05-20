@@ -14,7 +14,6 @@ services:
     volumes:
       - ./data/mongo/:/data/db
       - ./db-scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
-      - ./db-scripts/cleanup.sh:/cleanup.sh
 
   tron-node:
     container_name: tron-node
@@ -23,7 +22,6 @@ services:
       args:
         - JAVA_TRON_VERSION=${JAVA_TRON_VERSION:-GreatVoyage-v4.7.0}
     env_file:
-      - ./default.conf
       - ./tron.conf
     environment:
       NETWORK: mainnet
@@ -70,5 +68,5 @@ services:
       DB_PORT: 27017
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_SCHEDULE: "6 * * * *"
-
+    env_file:
+      - ./tron.conf

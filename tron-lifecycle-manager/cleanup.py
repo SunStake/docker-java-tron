@@ -18,7 +18,7 @@ def get_config() -> Dict[str, Union[str, int, float]]:
         "MONGO_DBNAME": str,
         "MONGO_USERNAME": str,
         "MONGO_PASSWORD": str,
-        "MONGO_DEADLINE": float,
+        "MONGO_RETENTION_DAYS": float,
     }
     config = {k.lower(): required_vars[k](
         os.environ[k]) for k in required_vars}
@@ -37,7 +37,7 @@ Connect to MongoDB, authenticate, and remove old documents from the database.
 
     history_timestamp = int(
         (datetime.now() -
-         timedelta(days=int(config["mongo_deadline"]))).timestamp() * 1000
+         timedelta(days=int(config["mongo_retention_days"]))).timestamp() * 1000
     )
     collections = db.list_collection_names()
     collections_to_clean = [
